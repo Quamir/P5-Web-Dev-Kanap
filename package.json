@@ -1,0 +1,19 @@
+{
+  "name": "kanap",
+  "version": "1.0.0",
+  "description": "This is the front end and back end server for Project 5 of the Web Developer path.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Quamir/P5-Web-Dev-Kanap.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Quamir/P5-Web-Dev-Kanap/issues"
+  },
+  "homepage": "https://github.com/Quamir/P5-Web-Dev-Kanap#readme"
+}
