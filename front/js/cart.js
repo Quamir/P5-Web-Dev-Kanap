@@ -1,10 +1,8 @@
 const totalPrice = document.getElementById('totalPrice');
 
-
-
-
 let cartData = localStorage.getItem('cart');
 let cart;
+let contact ={}
 cart = JSON.parse(cartData);
 
 console.log(cart);
@@ -144,6 +142,7 @@ class UserInputForm{
         const email = document.getElementById('email');
         const confrimOrderBtn = document.getElementById('order');
 
+        // ERRORS
         const firstNameErr = document.getElementById('firstNameErrorMsg');
         const lastNameErr = document.getElementById('lastNameErrorMsg');
         const addressErr = document.getElementById('addressErrorMsg');
@@ -153,18 +152,7 @@ class UserInputForm{
 
         confrimOrderBtn.addEventListener('click', (event) =>{
 
-          
-
             event.preventDefault();
-
-            const confirmOrderData ={
-                firstName: firstName.value.trim(),
-                LastName: lastName.value.trim(),
-                address: address.value.trim(),
-                city: city.value.trim(),
-                email: email.value.trim(),
-
-            }
 
             firstNameErr.innerText = ' ';
             lastNameErr.innerText = ' ';
@@ -174,41 +162,82 @@ class UserInputForm{
 
             const regxEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             const regxNames = /^[a-z ,.'-]+$/i;
-
-            console.log(regxNames.test(confirmOrderData.firstName));
-
-
-            if(regxNames.test(confirmOrderData.firstName) === false){  
+            console.log(firstName);
+            
+            if(regxNames.test(firstName.value) === false){  
                 firstNameErr.innerText = 'please enter a vaild first name';
                 firstNameErr.style.color = 'red';
             }
-            if(regxNames.test(confirmOrderData.LastName) === false){
+            console.log(firstName.value);
+            if(regxNames.test(lastName.value) === false){
                 lastNameErr.innerHTML = 'please enter a vaild last name';
                 lastNameErr.style.color = 'red';
             }
-            if(confirmOrderData.address === ''){
+            if(address.value === ''){
                 addressErr.innerText = 'please enter a vaild address';
                 addressErr.style.color = 'red';
             }
-            if(confirmOrderData.city === ''){
+            if(city.value === ''){
                 cityErr.innerHTML = 'please enter a vaild city';
                 cityErr.style.color = 'red';
             }
-            if(regxEmail.test(confirmOrderData.email) === false){
+            if(regxEmail.test(email.value) === false){
         
                 emailErr.innerHTML = 'please enter a vaild email address';
                 emailErr.style.color = 'red';
             }
-            console.log(confirmOrderData.city);
-            console.log(confirmOrderData.firstName);           
+
+            const newArray = [];
+
+            cart.forEach(item =>{
+                newArray.push(item.id);
+            });
+
+           const postaData = {
+            contact: {
+                firstName: firstName.value.trim(),
+                lastName: lastName.value.trim(),
+                address: address.value.trim(),
+                city: city.value.trim(),
+                email: email.value.trim()
+            },
+
+            products: newArray
+           } 
+
+            console.log(newArray);
+            console.log((postaData));
+
+            Post.SendData(postaData);
+           
         });
 
     }
 }
 
-class Validator{
-   
+class Post{
+
+    static async SendData(bodyData){
+       fetch(' http://localhost:3000/api/products/order',{
+         method: 'post',
+         body: JSON.stringify(bodyData),
+         headers:{
+            'Content-Type':'application/json'
+         }
+       }).then(function (response){
+           return response.text();
+       }).then(function (text){
+           const parseText = JSON.parse(text)
+           console.log(parseText);
+           console.log(parseText.orderId);
+           window.location.replace(`./confirmation.html?id=${parseText.orderId}`);
+       }).catch(function (error){
+           console.log(error);
+       })
+    }
+
 }
+
 
 class LocalStorage{
 
@@ -219,7 +248,7 @@ class LocalStorage{
 
 
 function totalCartPrice(){
-    const cartItemContentDescription = document.querySelectorAll('.cart__item__content__description')
+    const cartItemContentDescription = document.querySelectorAll('.cart__item__content__description');
     let totalItems = 0;
     
     cartItemContentDescription.forEach(item =>{
@@ -232,12 +261,13 @@ function totalCartPrice(){
 
 document.addEventListener("DOMContentLoaded", () =>{
     const cartItem = new CartItem();
-    const confrimOrder = new UserInputForm();
+    const order = new UserInputForm();
+    const post = new Post();
 
     cartItem.renderCartItems();
     cartItem.userChanges();
-    confrimOrder.confrimOrder();
+    order.confrimOrder();
 });
-
+ 
 
 
