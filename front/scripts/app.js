@@ -1,11 +1,11 @@
 // GET Request for homepage to display products
-
 function getProducts(){
 
     fetch('http://localhost:3000/api/products')
     .then((response) => response.json())
     .then((data) =>{
-
+        
+        // creates products for the homepage using the data for the GET Request
         data.forEach(function(product){
 
             // creates new html elements 
@@ -32,11 +32,9 @@ function getProducts(){
             articleTag.appendChild(headingTag);
             articleTag.appendChild(pTag);
     
-            
             items.appendChild(anchorTag);
         });
     })
 }
-
 
 getProducts();

@@ -8,14 +8,9 @@ const quantityInput = document.getElementById('quantity');
 const addToCartBtn = document.getElementById('addToCart');
 
 const imgTag = document.createElement('img');
-
-
 const getProductId = location.search.substring(4);  
 let cartData = localStorage.getItem('cart');
-
 let cart;
-
-
 
 if(cartData === null){
    cart = [];
@@ -26,9 +21,8 @@ if(cartData === null){
     console.log("cart has items in it");
 }
 
-
 class Products{
-
+    // gets data From api with a GET Request 
     async fetchProducts(){
         
         try{
@@ -36,7 +30,7 @@ class Products{
             let data = await result.json();
 
             return data;
-
+            
         }catch(error){
             console.log(error);
         }
@@ -44,11 +38,11 @@ class Products{
 }
 
 // display
-
 class UI{
 
+  
     renderProducts(data){
-
+        // Uses data from get request to render product image and information
         data.forEach(function(data){
 
             if(getProductId === data._id){
@@ -58,29 +52,26 @@ class UI{
                 titleEl.innerText = data.name;
                 pageTitle.innerText = data.name;
 
-                // createImgEl(data,productImage);
                 imgTag.src = data.imageUrl;
                 imgTag.alt = data.altTxt;
                 imgTag.className = "new__img";
 
                 productImage.appendChild(imgTag);
-
-                
+                // searches the array for the color array the values
+                // The values in the color array are added as options in the dropdown menu
                 data.colors.forEach(function(color){
                     const option = document.createElement('option');
                     option.innerText = color;
                     selectColor.appendChild(option);
                 });
-    
             }
-            
         });
-
     }
     
     addToCart(){
 
-        addToCartBtn.addEventListener('click',(event)=>{
+        // creates an object out of user selected values
+        addToCartBtn.addEventListener('click', ()=>{
             
             const item = {
                 id : getProductId,
@@ -92,7 +83,7 @@ class UI{
                 color : selectColor.value,
                 quantity  : quantityInput.value
             }
-           
+            // checks if the item is already in the cart 
             const findIdex = cart.findIndex((cartItems) =>{
                 return cartItems.id === item.id && cartItems.color === item.color;
            });
@@ -102,51 +93,41 @@ class UI{
            if(cart === []){
                 console.log("first item in cart");
                 cart.push(item);
-
             }else if(findIdex === -1){
                 cart.push(item);
                 console.log(cart);
             }else{
-
+                // if the cart is not empty and the item is already in the cart 
+                // the quantity of the item is increased 
                 console.log(findIdex);
-                //  quantity logic 
                 const newQuantity = parseInt(cart[findIdex].quantity) + parseInt(item.quantity);
                 cart[findIdex].quantity = String(newQuantity);
 
                 console.log(cart);
             }  
-
-            LocalStorage.saveCart();
+            LocalStorage.saveCart(cart);
         });
-        
     }
-    
 }
 
-
-// local storage 
-
 class LocalStorage{
-
-    static saveProducts(data){
-        localStorage.setItem("data", JSON.stringify(data));
-    }
-
-
+    // puts the array of products into localStorage 
     static saveCart(){
         localStorage.setItem('cart', JSON.stringify(cart));
     }
-
 }
 
+// initializes classes and start the http request 
+// begins rendering products 
+// and set the EventListener on the add to cart button
 document.addEventListener("DOMContentLoaded", () =>{
+
     const ui = new UI();
     const products = new Products();
 
-    // get all products 
+    // gets all products 
     products.fetchProducts().then(data =>{
     ui.renderProducts(data);
-    LocalStorage.saveProducts(data);
     }).then(() =>{
         ui.addToCart();
     });
