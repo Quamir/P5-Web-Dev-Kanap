@@ -4,7 +4,7 @@ let cartData = localStorage.getItem('cart');
 let cart;
 let contact ={}
 cart = JSON.parse(cartData);
-console.log(cart);
+
 
 class CartItem{
 
@@ -15,7 +15,7 @@ class CartItem{
     renderCartItems(){
 
         // inserts the data form localStorage into a varbile that ueses a template literal
-        // the varible is then appened to 
+        // the variable is then appended to 
         cart.forEach(item =>{
 
             let itemElement = `
@@ -116,7 +116,7 @@ class CartItem{
 
 class UserInputForm{
 
-    confrimOrder(){
+    confirmOrder(){
 
         // Input fields
         const firstName = document.getElementById('firstName');
@@ -124,7 +124,7 @@ class UserInputForm{
         const address = document.getElementById('address');
         const city = document.getElementById('city');
         const email = document.getElementById('email');
-        const confrimOrderBtn = document.getElementById('order');
+        const confirmOrderBtn = document.getElementById('order');
 
         // ERRORS
         const firstNameErr = document.getElementById('firstNameErrorMsg');
@@ -168,7 +168,7 @@ class UserInputForm{
 
         // checks if user input is valid
         // then sends a object to the send data function 
-        confrimOrderBtn.addEventListener('click', (event) =>{
+        confirmOrderBtn.addEventListener('click', (event) =>{
 
             event.preventDefault();
 
@@ -178,23 +178,21 @@ class UserInputForm{
             validate(city.value,regexNames,'please enter a vaild city', cityErr);
             validate(email.value,regexEmail,'please enter a vaild email address', emailErr);
 
-            
             if(
                 validate(firstName.value,regexNames,'please enter a vaild first name',firstNameErr) === true ||
                 validate(lastName.value,regexNames,'please enter a vaild last name', lastNameErr) === true ||
                 validate(address.value,regexaddress,'please enter a vaild address', addressErr) === true ||
                 validate(city.value,regexNames,'please enter a vaild city', cityErr) === true ||
-                validate(email.value,regexEmail,'please enter a vaild email address', emailErr) 
+                validate(email.value,regexEmail,'please enter a vaild email address', emailErr)  === true
             ){
                 return 0;
 
             }else{
+            
                 const userInfo = [];
-
                 cart.forEach(item =>{
                     userInfo.push(item.id);
                 });
-    
     
                const postaData = {
                 contact: {
@@ -205,9 +203,13 @@ class UserInputForm{
                     email: email.value.trim()
                 },
                 products: userInfo
-               } 
-        
-                Post.SendData(postaData);
+               }
+
+               if(cart.length === 0){
+                    alert('cart is empty');
+               }else{
+                    Post.SendData(postaData); 
+               }     
             }
         });
 
@@ -221,13 +223,13 @@ class UserInputForm{
                 return false;
             }
         }
-
     }
 }
 
 class Post{
     // sends a post request and redirects to confirmation page 
     static async SendData(bodyData){
+
        fetch(' http://localhost:3000/api/products/order',{
          method: 'post',
          body: JSON.stringify(bodyData),
@@ -277,12 +279,12 @@ class Utils{
 
 
 // initializes classes renders the products in the cart 
-// initializes EventListeners for userchanges and confrimOrder 
+// initializes EventListeners for userchanges and confirmOrder 
 document.addEventListener("DOMContentLoaded", () =>{
     const cartItem = new CartItem();
     const order = new UserInputForm();
 
     cartItem.renderCartItems();
     cartItem.userChanges();
-    order.confrimOrder();
+    order.confirmOrder();
 });

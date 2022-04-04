@@ -6,19 +6,16 @@ const titleEl = document.getElementById('title');
 const pageTitle = document.querySelector('title');
 const quantityInput = document.getElementById('quantity');
 const addToCartBtn = document.getElementById('addToCart');
-
 const imgTag = document.createElement('img');
+
 const getProductId = location.search.substring(4);  
 let cartData = localStorage.getItem('cart');
 let cart;
 
 if(cartData === null){
    cart = [];
-   console.log(cart);
-   console.log('cart is empty');
 }else{
     cart = JSON.parse(cartData);
-    console.log("cart has items in it");
 }
 
 class Products{
@@ -125,7 +122,6 @@ document.addEventListener("DOMContentLoaded", () =>{
     const ui = new UI();
     const products = new Products();
 
-    // gets all products 
     products.fetchProducts().then(data =>{
     ui.renderProducts(data);
     }).then(() =>{
